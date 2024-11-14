@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  apigateway:
+    build:
+      context: ./apigateway
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000" 
+    depends_on:
+      - userservice
+    environment:
+      - SECRET_KEY_JWT=${SECRET_KEY_JWT}
+      - API_KEY=${API_KEY}
+      - PRIVATE_KEY=${PRIVATE_KEY}
+
+  userservice:
+    build:
+      context: ./userService
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000" 
+    environment:
+      - SECRET_KEY_JWT=${SECRET_KEY_JWT}
+      - API_KEY=${API_KEY}
