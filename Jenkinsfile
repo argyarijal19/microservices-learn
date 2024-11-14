@@ -2,7 +2,7 @@ pipeline {
     agent any
     
     environment {
-        IMAGE_NAME = 'argyarijal/api-gateway:canary'
+        IMAGE_NAME = 'argyarijal/microservice:canary'
         CONTAINER_NAME = ''
         BRANCH_NAME = "main"
         MSG_COMMIT = sh(script: "git log -1 --pretty=%B ${env.GIT_COMMIT}", returnStdout: true).trim()
