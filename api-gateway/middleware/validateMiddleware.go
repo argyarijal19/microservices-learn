@@ -2,6 +2,8 @@ package middleware
 
 import (
 	"api-gateway/lib"
+	"bytes"
+	"encoding/json"
 	"os"
 
 	"github.com/gofiber/fiber/v2"
@@ -15,15 +17,25 @@ func ValidateMiddleware() fiber.Handler {
 
 		privateKey := os.Getenv("PRIVATE_KEY")
 
-		body := ctx.Body()
-
 		if receivedSignature == "" || timestamp == "" || apiToken == "" {
 			return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 				"error": "Missing required headers",
 			})
 		}
+
+		var formattedBody bytes.Buffer
+
+		if ctx.Body() != nil {
+			err := json.Compact(&formattedBody, ctx.Body())
+			if err != nil {
+				return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+					"error": "Failed to parse request body",
+				})
+			}
+		}
+
 		// Validasi x-signature
-		isValid := lib.ValidateXSignature(receivedSignature, timestamp, string(body), apiToken, privateKey)
+		isValid := lib.ValidateXSignature(receivedSignature, timestamp, formattedBody.String(), apiToken, privateKey)
 		if !isValid {
 			return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 				"error": "Invalid signature",

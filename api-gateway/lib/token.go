@@ -9,8 +9,13 @@ import (
 
 func GenerateXSignature(timestamp, bodyRequest, apiToken, privateKey string) (string, error) {
 	// Concatenate the payload
-	payload := fmt.Sprintf("%s%s%s", timestamp, bodyRequest, apiToken)
-	fmt.Println("Payload :", payload) // Debugging line
+	var payload string
+
+	if bodyRequest == "" {
+		payload = fmt.Sprintf("%s%s%s", timestamp, bodyRequest, apiToken)
+	} else {
+		payload = fmt.Sprintf("%s%s", timestamp, apiToken)
+	}
 
 	// Create HMAC-SHA256 hash
 	h := hmac.New(sha256.New, []byte(privateKey))
@@ -21,7 +26,6 @@ func GenerateXSignature(timestamp, bodyRequest, apiToken, privateKey string) (st
 
 	// Encode the HMAC hash to hexadecimal
 	signature := hex.EncodeToString(h.Sum(nil))
-	fmt.Println("Generated Signature:", signature) // Debugging line
 	return signature, nil
 }
 
