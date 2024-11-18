@@ -15,7 +15,7 @@ func AuthRoutes(router *fiber.App) {
 	handlers := handlers.NewAuthHandlers(service)
 
 	groupRoutes := router.Group("/auth")
-	groupRoutes.Post("/", middleware.AuthTokenJWT(), middleware.VerifyAPIKey(), handlers.GenerateToken)
+	groupRoutes.Post("/", middleware.VerifyAPIKey(), handlers.GenerateToken)
 	groupRoutes.Get("/", middleware.AuthTokenJWT(), middleware.VerifyAPIKey(), handlers.CheckToken)
 	groupRoutes.Delete("/", middleware.AuthTokenJWT(), middleware.VerifyAPIKey(), handlers.RevokeToken)
 }

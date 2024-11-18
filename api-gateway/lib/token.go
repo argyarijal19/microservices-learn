@@ -5,18 +5,20 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"log"
 )
 
 func GenerateXSignature(timestamp, bodyRequest, apiToken, privateKey string) (string, error) {
 	// Concatenate the payload
 	var payload string
 
-	if bodyRequest == "" {
+	if bodyRequest != "" {
 		payload = fmt.Sprintf("%s%s%s", timestamp, bodyRequest, apiToken)
 	} else {
 		payload = fmt.Sprintf("%s%s", timestamp, apiToken)
 	}
 
+	log.Println("Payload:", payload)
 	// Create HMAC-SHA256 hash
 	h := hmac.New(sha256.New, []byte(privateKey))
 	_, err := h.Write([]byte(payload))
